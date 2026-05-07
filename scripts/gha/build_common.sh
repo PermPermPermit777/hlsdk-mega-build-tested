@@ -67,15 +67,6 @@ build_hlsdk_portable_branch()
 		return 1
 	fi
 
-	# write git metadata sidecar so the release job can build manifest.json
-	mkdir -p ../out
-	printf '{"branch":"%s","commit":"%s","tree":"%s","url":"%s"}\n' \
-		"$1" \
-		"$(git rev-parse HEAD)" \
-		"$(git rev-parse HEAD^{tree})" \
-		"$(git remote get-url origin)" \
-		> "../out/gitinfo-${GAMEDIR}-${GH_CPU_OS}-${GH_CPU_ARCH}.json"
-
 	if [ "$USE_CMAKE" -eq 1 ]; then
 		build_with_cmake "$GAMEDIR"
 	else
@@ -91,6 +82,17 @@ build_hlsdk_portable_branch()
 	if [ "$SUCCESS" -ne 0 ]; then
 		return 2
 	fi
+
+	# write git metadata sidecar so the release job can build manifest.json.
+	# only written on a successful build so the manifest never references
+	# a (gamedir, platform) pair that has no corresponding zip.
+	mkdir -p ../out
+	printf '{"branch":"%s","commit":"%s","tree":"%s","url":"%s"}\n' \
+		"$1" \
+		"$(git rev-parse HEAD)" \
+		"$(git rev-parse HEAD^{tree})" \
+		"$(git remote get-url origin)" \
+		> "../out/gitinfo-${GAMEDIR}-${GH_CPU_OS}-${GH_CPU_ARCH}.json"
 
 	return 0
 }
