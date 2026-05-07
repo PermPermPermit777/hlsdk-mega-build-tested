@@ -119,13 +119,14 @@ jobs:
         echo "Repackaged artifacts:"
         ls -R
         popd
+        python3 scripts/gha/generate_manifest.py
         sleep 5s
         gh release create "$RELEASE_TAG" \
           --title "HLSDK Mega Continuous ${{ github.ref_name }} Build" \
           --target $GITHUB_SHA \
           --repo "$GITHUB_REPOSITORY" \
           --prerelease
-        sleep 5s
+        gh release upload --clobber "$RELEASE_TAG" out/manifest.json
         gh release upload --clobber "$RELEASE_TAG" out/*-android-amd64.zip
         sleep 5s
         gh release upload --clobber "$RELEASE_TAG" out/*-android-arm64.zip
