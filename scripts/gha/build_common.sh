@@ -62,6 +62,11 @@ build_hlsdk_portable_branch()
 	# all hlsdk-portable branches have mod_options.txt file
 	GAMEDIR=$(grep GAMEDIR mod_options.txt | tr '=' ' ' | cut -d' ' -f2 )
 
+	if [ -z "$GAMEDIR" ]; then
+		echo "error: could not parse GAMEDIR from mod_options.txt for branch $1" >&2
+		return 1
+	fi
+
 	# write git metadata sidecar so the release job can build manifest.json
 	mkdir -p ../out
 	printf '{"branch":"%s","commit":"%s","tree":"%s","url":"%s"}\n' \

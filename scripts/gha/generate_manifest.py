@@ -42,6 +42,9 @@ for sidecar in sorted(OUT.glob('gitinfo-*.json')):
     if gamedir is None:
         warn(f'unrecognised sidecar name {sidecar.name}')
         continue
+    if not gamedir:
+        warn(f'empty gamedir in sidecar {sidecar.name}, skipping')
+        continue
     gitinfo[gamedir, platform] = json.loads(sidecar.read_text())
 
 gamedirs = {gd for gd, _ in gitinfo}
@@ -78,6 +81,7 @@ server = os.environ.get('GITHUB_SERVER_URL', 'https://github.com')
 repo = os.environ.get('GITHUB_REPOSITORY', '')
 
 manifest = {
+    'version': 1,
     'build': {
         'repo': f'{server}/{repo}',
         'commit': os.environ.get('GITHUB_SHA', ''),
