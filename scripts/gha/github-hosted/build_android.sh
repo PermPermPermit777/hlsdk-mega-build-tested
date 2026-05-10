@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/ndk
+export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/ndk/29.0.14206865
 
 # "booo, bash feature!"
 declare -A CMAKE_CONFIGURE_PLATFORM_OPTS
