@@ -1,5 +1,11 @@
 name: Build & Deploy HLSDK
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    # Rebuild every two days at 03:17 UTC to pick up upstream hlsdk-portable changes
+    - cron: '17 3 */2 * *'
+  workflow_dispatch:
 jobs:
 
 # !!!RESTORE WHEN SELF-HOSTED RUNNER WILL BE USED AGAIN!!!
@@ -90,7 +96,7 @@ jobs:
     name: "Upload releases"
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
