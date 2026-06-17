@@ -3,8 +3,8 @@ on:
   push:
   pull_request:
   schedule:
-    # Rebuild every two days at 03:17 UTC to pick up upstream hlsdk-portable changes
-    - cron: '17 3 */2 * *'
+    # Rebuild every one days to pick up upstream hlsdk-portable changes
+    - cron: '0 0 * * *'
   workflow_dispatch:
 jobs:
 
@@ -78,7 +78,7 @@ jobs:
       GH_CPU_ARCH: ${{ matrix.targetarch }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6.0.3
       with:
         submodules: recursive
     - name: Install dependencies
@@ -88,7 +88,7 @@ jobs:
         FWGS_PFX_PASSWORD: ${{ secrets.FWGS_PFX_PASSWORD }}
       run: bash scripts/gha/${{ runner.environment }}/build_${{ matrix.targetos }}.sh
     - name: Upload HLSDK (artifacts)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: artifact-${{ matrix.targetos }}-${{ matrix.targetarch }}
         path: out/*
@@ -97,9 +97,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    permissions: write-all
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6.0.3
       with:
         submodules: recursive
     - name: Remove old release, fetch artifacts, repackage binaries and upload new release
